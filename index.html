@@ -1,0 +1,1394 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>FOOD LINK</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
+
+<style>
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+/* Layout: centered phone frame on desktop, full-bleed on mobile */
+:root {
+  --green:       #2E7D32;
+  --green-mid:   #388E3C;
+  --green-light: #E8F5E9;
+  --green-soft:  #C8E6C9;
+  --orange:      #F57C00;
+  --orange-light:#FFF3E0;
+  --bg:          #F5F7F5;
+  --surface:     #FFFFFF;
+  --border:      #E0E7E0;
+  --text-1:      #1A2B1A;
+  --text-2:      #4A6048;
+  --text-3:      #7A957A;
+  --danger:      #C62828;
+  --danger-bg:   #FFEBEE;
+  --success:     #2E7D32;
+  --warn:        #E65100;
+  --shadow:      0 2px 12px rgba(46,125,50,.10);
+  --shadow-lg:   0 8px 32px rgba(46,125,50,.14);
+  --r:           14px;
+  --r-sm:        8px;
+  font-family: 'Inter', system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:          #0F1A0F;
+    --surface:     #1A2B1A;
+    --border:      #2A3E2A;
+    --text-1:      #E8F5E9;
+    --text-2:      #A5C8A5;
+    --text-3:      #6A8A6A;
+    --green-light: #1B3A1B;
+    --green-soft:  #2A4E2A;
+    --orange-light:#2A1F0F;
+    --danger-bg:   #2A0F0F;
+    --shadow:      0 2px 12px rgba(0,0,0,.4);
+    --shadow-lg:   0 8px 32px rgba(0,0,0,.5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:          #0F1A0F;
+  --surface:     #1A2B1A;
+  --border:      #2A3E2A;
+  --text-1:      #E8F5E9;
+  --text-2:      #A5C8A5;
+  --text-3:      #6A8A6A;
+  --green-light: #1B3A1B;
+  --green-soft:  #2A4E2A;
+  --orange-light:#2A1F0F;
+  --danger-bg:   #2A0F0F;
+  --shadow:      0 2px 12px rgba(0,0,0,.4);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,.5);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 24px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ── Phone shell ──────────────────────────────────────────────────────────── */
+.phone {
+  width: 390px;
+  min-height: 780px;
+  background: var(--surface);
+  border-radius: 44px;
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--border), 0 0 0 10px #111, 0 0 0 12px #333;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 440px) {
+  body { padding: 0; align-items: flex-start; }
+  .phone { width: 100%; min-height: 100dvh; border-radius: 0; box-shadow: none; }
+}
+
+/* notch */
+.phone::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 32px;
+  background: #111;
+  border-radius: 0 0 20px 20px;
+  z-index: 100;
+}
+
+/* ── Status bar ───────────────────────────────────────────────────────────── */
+.status-bar {
+  height: 44px;
+  padding: 0 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+.status-bar.dark { background: var(--green); color: #fff; }
+.status-bar.light { background: var(--surface); color: var(--text-1); border-bottom: 1px solid var(--border); }
+.sb-icons { display: flex; gap: 4px; align-items: center; }
+
+/* ── Screen system ─────────────────────────────────────────────────────────── */
+.screen {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+.screen.active { display: flex; }
+
+/* ── Top bar ───────────────────────────────────────────────────────────────── */
+.topbar {
+  background: var(--green);
+  color: #fff;
+  padding: 12px 20px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.topbar h1 { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 700; flex: 1; }
+.topbar .back-btn {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,.2);
+  border: none; border-radius: 50%;
+  color: #fff; font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.topbar .topbar-action {
+  background: rgba(255,255,255,.2);
+  border: none; border-radius: var(--r-sm);
+  color: #fff; font-size: 12px; font-weight: 600;
+  padding: 6px 12px; cursor: pointer;
+}
+
+/* ── Scroll body ───────────────────────────────────────────────────────────── */
+.scroll-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.scroll-body::-webkit-scrollbar { width: 3px; }
+.scroll-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* ── Bottom nav ────────────────────────────────────────────────────────────── */
+.bottom-nav {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom, 8px);
+  flex-shrink: 0;
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 0 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 500;
+  transition: color .15s;
+}
+.nav-item.active { color: var(--green); }
+.nav-item .nav-icon { font-size: 20px; line-height: 1; }
+
+/* ── Cards ─────────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.card-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform .1s, box-shadow .1s;
+}
+.card-row:active { transform: scale(.98); }
+.card-row .icon-circle {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* ── Stat tiles ─────────────────────────────────────────────────────────────── */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+.stat-tile .num {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--green);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.stat-tile .label { font-size: 11px; color: var(--text-3); font-weight: 500; margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
+
+/* ── Badges ─────────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+.badge-green   { background: var(--green-light); color: var(--green); }
+.badge-orange  { background: var(--orange-light); color: var(--orange); }
+.badge-blue    { background: #E3F2FD; color: #1565C0; }
+.badge-grey    { background: var(--border); color: var(--text-3); }
+.badge-red     { background: var(--danger-bg); color: var(--danger); }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────── */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--r);
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s, transform .1s;
+}
+.btn:active { transform: scale(.98); opacity: .9; }
+.btn-primary { background: var(--green); color: #fff; }
+.btn-secondary { background: var(--green-light); color: var(--green); }
+.btn-danger { background: var(--danger-bg); color: var(--danger); }
+.btn-orange { background: var(--orange); color: #fff; }
+.btn-row { display: flex; gap: 10px; }
+.btn-row .btn { font-size: 13px; padding: 11px; }
+
+/* ── Form fields ─────────────────────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 12px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: .5px; }
+.field input, .field select, .field textarea {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 11px 13px;
+  font-size: 14px;
+  color: var(--text-1);
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s;
+}
+.field input:focus, .field select:focus { border-color: var(--green); }
+.field select option { background: var(--surface); }
+
+/* ── Hero banner ─────────────────────────────────────────────────────────────── */
+.hero-banner {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%);
+  border-radius: var(--r);
+  padding: 20px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.hero-banner::after {
+  content: "🍱";
+  position: absolute;
+  right: 16px; bottom: -8px;
+  font-size: 60px;
+  opacity: .2;
+}
+.hero-banner h2 { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; }
+.hero-banner p { font-size: 13px; opacity: .85; margin-top: 4px; }
+
+/* ── Ranking bar ─────────────────────────────────────────────────────────────── */
+.rank-bar { background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
+.rank-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--green-mid), var(--green)); transition: width .6s ease; }
+
+/* ── QR placeholder ──────────────────────────────────────────────────────────── */
+.qr-box {
+  width: 180px; height: 180px;
+  border: 3px solid var(--green);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 100px;
+  margin: 0 auto;
+  background: var(--green-light);
+  position: relative;
+}
+.qr-corner {
+  position: absolute;
+  width: 24px; height: 24px;
+  border-color: var(--green);
+  border-style: solid;
+}
+.qr-corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
+.qr-corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
+.qr-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
+.qr-corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
+
+/* ── Scanner animation ───────────────────────────────────────────────────────── */
+@keyframes scan { 0%,100%{transform:translateY(0)} 50%{transform:translateY(140px)} }
+.scan-line {
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  animation: scan 2s ease-in-out infinite;
+}
+
+/* ── Alert timer ─────────────────────────────────────────────────────────────── */
+.timer-banner {
+  background: var(--orange-light);
+  border: 1px solid var(--orange);
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.timer-banner span { font-size: 13px; color: var(--warn); font-weight: 500; }
+
+/* ── Section label ───────────────────────────────────────────────────────────── */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--text-3);
+  margin-bottom: -4px;
+}
+
+/* ── Role toggle ─────────────────────────────────────────────────────────────── */
+.role-toggle {
+  display: flex;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 3px;
+}
+.role-toggle button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: calc(var(--r-sm) - 2px);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: none;
+  color: var(--text-3);
+  transition: all .2s;
+}
+.role-toggle button.active { background: var(--green); color: #fff; }
+
+/* ── Divider ─────────────────────────────────────────────────────────────────── */
+.divider { height: 1px; background: var(--border); }
+
+/* ── Toast ───────────────────────────────────────────────────────────────────── */
+#toast {
+  position: absolute;
+  bottom: 80px; left: 20px; right: 20px;
+  background: var(--text-1);
+  color: var(--surface);
+  padding: 12px 16px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  z-index: 999;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .25s, transform .25s;
+  pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+
+/* ── Auth screen ─────────────────────────────────────────────────────────────── */
+.auth-logo {
+  text-align: center;
+  padding: 32px 0 8px;
+}
+.auth-logo .logo-icon {
+  width: 70px; height: 70px;
+  background: var(--green);
+  border-radius: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 36px;
+  box-shadow: 0 8px 24px rgba(46,125,50,.3);
+}
+.auth-logo h2 { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 800; color: var(--green); margin-top: 10px; }
+.auth-logo p { font-size: 13px; color: var(--text-3); margin-top: 2px; }
+
+/* ── Donation status flow ────────────────────────────────────────────────────── */
+.status-flow { display: flex; align-items: center; gap: 4px; margin: 4px 0; }
+.flow-step { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+.flow-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+.flow-dot.done { background: var(--green); }
+.flow-dot.active { background: var(--orange); box-shadow: 0 0 0 3px var(--orange-light); }
+.flow-line { height: 2px; flex: 1; background: var(--border); }
+.flow-line.done { background: var(--green); }
+.flow-label { font-size: 9px; color: var(--text-3); font-weight: 500; white-space: nowrap; }
+.flow-label.active { color: var(--orange); font-weight: 700; }
+.flow-label.done { color: var(--green); }
+
+</style>
+
+<div class="phone">
+  <div id="status-bar" class="status-bar light">
+    <span id="sb-time">8:17</span>
+    <div class="sb-icons">
+      <span>▲▲▲</span>
+      <span>WiFi</span>
+      <span>🔋</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: Login -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen active" id="screen-login">
+    <div class="scroll-body" style="justify-content: flex-start;">
+      <div class="auth-logo">
+        <div class="logo-icon">🍱</div>
+        <h2>FOOD LINK</h2>
+        <p>Smart Food Rescue & Donation</p>
+      </div>
+
+      <div class="card" style="margin-top: 8px;">
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div class="field">
+            <label>Email</label>
+            <input id="login-email" type="email" value="donor@foodlink.in" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input id="login-pass" type="password" value="demo123" placeholder="••••••••">
+          </div>
+          <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
+          <div style="text-align:center; font-size:13px; color:var(--text-3);">Don't have an account? <a href="#" style="color:var(--green); font-weight:600;" onclick="showScreen('register'); return false;">Register</a></div>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--green-light); border-color:var(--green-soft);">
+        <div class="section-label" style="margin-bottom:8px;">Demo Accounts</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; gap:8px; align-items:center; cursor:pointer;" onclick="fillLogin('donor@foodlink.in','demo123')">
+            <span style="font-size:18px;">🧑</span>
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:13px; font-weight:600; color:var(--text-1);">Donor — Rakesh</div>
+              <div style="font-size:11px; color:var(--text-3);">donor@foodlink.in</div>
+            </div>
+            <span class="badge badge-green">Tap</span>
+          </div>
+          <div class="divider"></div>
+          <div style="display:flex; gap:8px; align-items:center; cursor:pointer;" onclick="fillLogin('ngo1@foodlink.in','demo123')">
+            <span style="font-size:18px;">🏛️</span>
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:13px; font-weight:600; color:var(--text-1);">NGO — Hope Foundation</div>
+              <div style="font-size:11px; color:var(--text-3);">ngo1@foodlink.in</div>
+            </div>
+            <span class="badge badge-orange">Tap</span>
+          </div>
+          <div class="divider"></div>
+          <div style="display:flex; gap:8px; align-items:center; cursor:pointer;" onclick="fillLogin('ngo2@foodlink.in','demo123')">
+            <span style="font-size:18px;">🏢</span>
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:13px; font-weight:600; color:var(--text-1);">NGO — Food For All</div>
+              <div style="font-size:11px; color:var(--text-3);">ngo2@foodlink.in</div>
+            </div>
+            <span class="badge badge-orange">Tap</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: Register -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-register">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('login')">‹</button>
+      <h1>Create Account</h1>
+    </div>
+    <div class="scroll-body">
+      <div class="field">
+        <label>I am a</label>
+        <div class="role-toggle">
+          <button id="role-donor" class="active" onclick="setRole('DONOR')">🧑 Donor</button>
+          <button id="role-ngo" onclick="setRole('NGO')">🏛️ NGO</button>
+        </div>
+      </div>
+      <div class="field"><label>Full Name</label><input id="reg-name" type="text" placeholder="Your name"></div>
+      <div class="field"><label>Email</label><input id="reg-email" type="email" placeholder="you@example.com"></div>
+      <div class="field"><label>Password</label><input id="reg-pass" type="password" placeholder="Min 6 characters"></div>
+      <div class="field"><label>Phone</label><input id="reg-phone" type="tel" placeholder="+91 ..."></div>
+      <div id="ngo-fields" style="display:none; flex-direction:column; gap:12px;">
+        <div class="field"><label>NGO Organisation Name</label><input id="reg-ngo-name" type="text" placeholder="Organisation name"></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="field"><label>Latitude</label><input id="reg-lat" type="number" step="0.0001" value="13.0827"></div>
+          <div class="field"><label>Longitude</label><input id="reg-lng" type="number" step="0.0001" value="80.2707"></div>
+        </div>
+        <div class="field"><label>Member Count</label><input id="reg-members" type="number" value="50"></div>
+      </div>
+      <button class="btn btn-primary" onclick="doRegister()">Create Account</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: Donor Home -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-donor-home">
+    <div id="status-bar-donor" class="status-bar dark" style="background:var(--green);">
+      <span>8:17</span>
+      <div class="sb-icons"><span>▲▲▲</span><span>🔋</span></div>
+    </div>
+    <div class="scroll-body">
+      <div class="hero-banner">
+        <div style="font-size:12px; opacity:.7; margin-bottom:4px;">Good morning,</div>
+        <h2 id="donor-welcome">Rakesh 👋</h2>
+        <p>Every meal you share fights hunger</p>
+      </div>
+
+      <div class="section-label">Quick Actions</div>
+      <div class="card-row" onclick="showScreen('donor-create')">
+        <div class="icon-circle" style="background:var(--green-light);">➕</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:600; font-size:15px;">Donate Food</div>
+          <div style="font-size:12px; color:var(--text-3);">Submit a new food donation</div>
+        </div>
+        <span style="color:var(--text-3);">›</span>
+      </div>
+      <div class="card-row" onclick="showScreen('donor-donations')">
+        <div class="icon-circle" style="background:var(--orange-light);">📋</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:600; font-size:15px;">My Donations</div>
+          <div style="font-size:12px; color:var(--text-3);" id="donor-donation-count">Loading…</div>
+        </div>
+        <span style="color:var(--text-3);">›</span>
+      </div>
+      <div class="card-row" onclick="showScreen('dashboard')">
+        <div class="icon-circle" style="background:#E3F2FD;">📊</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:600; font-size:15px;">Impact Dashboard</div>
+          <div style="font-size:12px; color:var(--text-3);">See rescued food stats</div>
+        </div>
+        <span style="color:var(--text-3);">›</span>
+      </div>
+
+      <div class="section-label">Recent Activity</div>
+      <div id="donor-recent"></div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item active"><span class="nav-icon">🏠</span>Home</button>
+      <button class="nav-item" onclick="showScreen('donor-create')"><span class="nav-icon">➕</span>Donate</button>
+      <button class="nav-item" onclick="showScreen('donor-donations')"><span class="nav-icon">📋</span>History</button>
+      <button class="nav-item" onclick="showScreen('dashboard')"><span class="nav-icon">📊</span>Stats</button>
+      <button class="nav-item" onclick="doLogout()"><span class="nav-icon">⬅️</span>Logout</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: Create Donation -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-donor-create">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('donor-home')">‹</button>
+      <h1>Donate Food</h1>
+    </div>
+    <div class="scroll-body">
+      <div class="card" style="background:var(--green-light); border-color:var(--green-soft); padding:12px 16px;">
+        <div style="font-size:13px; color:var(--green); font-weight:500;">🌱 Your donation will be matched with the nearest NGO using our ranking algorithm (Score = 0.40×D + 0.20×A + 0.40×R)</div>
+      </div>
+      <div style="display:grid; grid-template-columns:2fr 1fr; gap:10px;">
+        <div class="field"><label>Quantity</label><input id="d-qty" type="number" value="15" placeholder="Amount"></div>
+        <div class="field"><label>Unit</label>
+          <select id="d-unit">
+            <option value="kg" selected>kg</option>
+            <option value="plates">plates</option>
+            <option value="litres">litres</option>
+            <option value="boxes">boxes</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Food Type / Description</label><input id="d-desc" type="text" value="Cooked rice and dal" placeholder="e.g. Cooked rice, 15kg"></div>
+      <div class="field"><label>Preparation Time</label><input id="d-prep" type="datetime-local"></div>
+      <div class="field"><label>Expiry Time</label><input id="d-exp" type="datetime-local"></div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="field"><label>Pickup Latitude</label><input id="d-lat" type="number" step="0.0001" value="13.0700"></div>
+        <div class="field"><label>Pickup Longitude</label><input id="d-lng" type="number" step="0.0001" value="80.2600"></div>
+      </div>
+      <div class="card" style="padding:12px 16px;">
+        <div style="font-size:12px; color:var(--text-3); font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">Pickup Location Preview</div>
+        <div style="background:var(--bg); border-radius:var(--r-sm); height:80px; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--text-3); font-size:13px;">
+          📍 Anna Nagar, Chennai (13.0700°N, 80.2600°E)
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="doCreateDonation()">📤 Submit Donation</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: My Donations -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-donor-donations">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('donor-home')">‹</button>
+      <h1>My Donations</h1>
+    </div>
+    <div class="scroll-body" id="my-donations-list">
+      <div style="text-align:center; color:var(--text-3); padding:40px 0; font-size:14px;">No donations yet.<br>Tap Donate to get started!</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: Donation Detail -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-donation-detail">
+    <div class="topbar">
+      <button class="back-btn" id="donation-detail-back" onclick="showScreen('donor-donations')">‹</button>
+      <h1>Donation #<span id="dd-id">—</span></h1>
+    </div>
+    <div class="scroll-body" id="donation-detail-body"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: NGO Ranking visualization (shown after donation created) -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-ngo-ranking">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('donor-donations')">‹</button>
+      <h1>NGO Ranking</h1>
+    </div>
+    <div class="scroll-body">
+      <div class="card" style="background:var(--green-light); border-color:var(--green-soft); padding:12px 16px;">
+        <div style="font-size:13px; color:var(--green); font-weight:600;">🧮 Algorithm: Score = 0.40×D + 0.20×A + 0.40×R</div>
+        <div style="font-size:11px; color:var(--text-2); margin-top:4px;">D = Distance (Haversine, min-max normalized) · A = Availability · R = Members (normalized)</div>
+      </div>
+      <div class="section-label">Ranked NGOs</div>
+      <div id="ranking-list"></div>
+      <div id="alert-sent-banner" style="display:none;">
+        <div class="timer-banner">
+          <span style="font-size:20px;">🔔</span>
+          <span>Alert sent to <strong id="alerted-ngo-name">—</strong> (Rank #1). They have <strong>5 minutes</strong> to respond.</span>
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="showScreen('donor-donations')" style="margin-top:8px;">← Back to My Donations</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: NGO Home -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-ngo-home">
+    <div class="status-bar dark" style="background:var(--orange);">
+      <span>8:17</span>
+      <div class="sb-icons"><span>▲▲▲</span><span>🔋</span></div>
+    </div>
+    <div class="scroll-body">
+      <div class="hero-banner" style="background:linear-gradient(135deg, var(--orange) 0%, #EF6C00 100%);">
+        <div style="font-size:12px; opacity:.7; margin-bottom:4px;">Logged in as NGO</div>
+        <h2 id="ngo-welcome">Hope Foundation 🏛️</h2>
+        <p id="ngo-sub">Available today · 150 members</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-tile">
+          <div class="num" id="ngo-stat-pending">0</div>
+          <div class="label">Pending Alerts</div>
+        </div>
+        <div class="stat-tile">
+          <div class="num" id="ngo-stat-accepted">0</div>
+          <div class="label">Accepted</div>
+        </div>
+      </div>
+
+      <div class="card-row" onclick="showScreen('ngo-alerts')">
+        <div class="icon-circle" style="background:var(--orange-light);">🔔</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:600; font-size:15px;">Food Alerts</div>
+          <div style="font-size:12px; color:var(--text-3);">View and respond to donation alerts</div>
+        </div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <span id="ngo-badge-count" class="badge badge-orange" style="display:none;">0</span>
+          <span style="color:var(--text-3);">›</span>
+        </div>
+      </div>
+      <div class="card-row" onclick="showScreen('dashboard')">
+        <div class="icon-circle" style="background:#E3F2FD;">📊</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:600; font-size:15px;">Impact Dashboard</div>
+          <div style="font-size:12px; color:var(--text-3);">City-wide food rescue statistics</div>
+        </div>
+        <span style="color:var(--text-3);">›</span>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:14px 16px; box-shadow:var(--shadow);">
+        <div>
+          <div style="font-weight:600; font-size:14px;">Availability Today</div>
+          <div style="font-size:12px; color:var(--text-3);" id="avail-label">Currently: Available ✅</div>
+        </div>
+        <div onclick="toggleAvailability()" style="cursor:pointer; width:48px; height:26px; background:var(--green); border-radius:99px; position:relative; transition:background .2s;" id="avail-toggle">
+          <div style="position:absolute; top:3px; right:3px; width:20px; height:20px; background:#fff; border-radius:50%; transition:right .2s;" id="avail-knob"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item active"><span class="nav-icon">🏠</span>Home</button>
+      <button class="nav-item" onclick="showScreen('ngo-alerts')"><span class="nav-icon">🔔</span>Alerts</button>
+      <button class="nav-item" onclick="showScreen('dashboard')"><span class="nav-icon">📊</span>Stats</button>
+      <button class="nav-item" onclick="doLogout()"><span class="nav-icon">⬅️</span>Logout</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: NGO Alerts -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-ngo-alerts">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('ngo-home')">‹</button>
+      <h1>Food Alerts</h1>
+    </div>
+    <div class="scroll-body" id="ngo-alerts-list">
+      <div style="text-align:center; color:var(--text-3); padding:40px 0; font-size:14px;">No alerts yet.</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: Alert Detail -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-alert-detail">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('ngo-alerts')">‹</button>
+      <h1>Alert Detail</h1>
+    </div>
+    <div class="scroll-body" id="alert-detail-body"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: QR Scanner -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-qr-scanner">
+    <div class="topbar">
+      <button class="back-btn" onclick="showScreen('ngo-alerts')">‹</button>
+      <h1>Scan QR Code</h1>
+    </div>
+    <div class="scroll-body" style="align-items:center; text-align:center;">
+      <div style="font-size:13px; color:var(--text-3);">Point your camera at the donor's QR code</div>
+      <div style="width:220px; height:220px; background:#111; border-radius:16px; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; margin:8px 0;">
+        <div style="position:absolute; inset:0; border:2px solid rgba(255,255,255,.1);"></div>
+        <div class="scan-line"></div>
+        <div style="position:absolute; top:12px; left:12px; width:24px; height:24px; border-top:3px solid var(--green); border-left:3px solid var(--green); border-radius:4px 0 0 0;"></div>
+        <div style="position:absolute; top:12px; right:12px; width:24px; height:24px; border-top:3px solid var(--green); border-right:3px solid var(--green); border-radius:0 4px 0 0;"></div>
+        <div style="position:absolute; bottom:12px; left:12px; width:24px; height:24px; border-bottom:3px solid var(--green); border-left:3px solid var(--green); border-radius:0 0 0 4px;"></div>
+        <div style="position:absolute; bottom:12px; right:12px; width:24px; height:24px; border-bottom:3px solid var(--green); border-right:3px solid var(--green); border-radius:0 0 4px 0;"></div>
+        <div style="color:rgba(255,255,255,.3); font-size:48px;">📷</div>
+      </div>
+      <div id="scanner-donation-info" style="font-size:13px; color:var(--text-3);"></div>
+      <button class="btn btn-primary" id="simulate-scan-btn" onclick="simulateScan()" style="width:100%;">
+        📲 Simulate Scan (Demo)
+      </button>
+      <div style="font-size:11px; color:var(--text-3);">In the real app, camera scans automatically</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: Dashboard -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-dashboard">
+    <div class="topbar">
+      <button class="back-btn" id="dashboard-back-btn" onclick="goBackFromDash()">‹</button>
+      <h1>Impact Dashboard</h1>
+    </div>
+    <div class="scroll-body">
+      <div class="section-label">City-wide Food Rescue Stats</div>
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="num" id="dash-total">—</div><div class="label">Total Donations</div></div>
+        <div class="stat-tile"><div class="num" id="dash-completed">—</div><div class="label">Completed</div></div>
+        <div class="stat-tile"><div class="num" id="dash-rescued">—</div><div class="label">kg Rescued</div></div>
+        <div class="stat-tile"><div class="num" id="dash-ngos">—</div><div class="label">Active NGOs</div></div>
+      </div>
+
+      <div class="section-label">Algorithm at a Glance</div>
+      <div class="card">
+        <div style="font-family:'Poppins',sans-serif; font-size:15px; font-weight:700; color:var(--green); margin-bottom:12px;">Score = 0.40×D + 0.20×A + 0.40×R</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span style="font-size:12px; font-weight:600; color:var(--text-2);">D — Distance (40%)</span><span style="font-size:12px; color:var(--text-3);">Haversine, min-max</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:40%;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span style="font-size:12px; font-weight:600; color:var(--text-2);">A — Availability (20%)</span><span style="font-size:12px; color:var(--text-3);">daily_availability flag</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:20%;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span style="font-size:12px; font-weight:600; color:var(--text-2);">R — Requirement (40%)</span><span style="font-size:12px; color:var(--text-3);">member count, normalized</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:40%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Donation Status Lifecycle</div>
+      <div class="card">
+        <div style="font-size:12px; color:var(--text-3); margin-bottom:10px;">How a donation moves through the system</div>
+        <div style="display:flex; align-items:center; gap:4px; overflow-x:auto; padding-bottom:4px;">
+          <div style="text-align:center; flex-shrink:0;"><div style="width:10px;height:10px;border-radius:50%;background:var(--text-3);margin:0 auto 3px;"></div><div style="font-size:9px;color:var(--text-3);">PENDING</div></div>
+          <div style="height:2px;flex:1;min-width:12px;background:var(--border);"></div>
+          <div style="text-align:center; flex-shrink:0;"><div style="width:10px;height:10px;border-radius:50%;background:var(--orange);margin:0 auto 3px;"></div><div style="font-size:9px;color:var(--orange);">ALERTED</div></div>
+          <div style="height:2px;flex:1;min-width:12px;background:var(--border);"></div>
+          <div style="text-align:center; flex-shrink:0;"><div style="width:10px;height:10px;border-radius:50%;background:#1565C0;margin:0 auto 3px;"></div><div style="font-size:9px;color:#1565C0;">ACCEPTED</div></div>
+          <div style="height:2px;flex:1;min-width:12px;background:var(--border);"></div>
+          <div style="text-align:center; flex-shrink:0;"><div style="width:10px;height:10px;border-radius:50%;background:var(--green);margin:0 auto 3px;"></div><div style="font-size:9px;color:var(--green);">COMPLETED</div></div>
+        </div>
+      </div>
+
+      <div id="ranked-preview" class="card" style="display:none;">
+        <div style="font-size:13px; font-weight:600; color:var(--text-2); margin-bottom:10px;">Last NGO Ranking Results</div>
+        <div id="ranked-preview-list"></div>
+      </div>
+    </div>
+    <div class="bottom-nav" id="dash-bottom-nav">
+      <button class="nav-item" onclick="goBackFromDash()"><span class="nav-icon">‹</span>Back</button>
+      <button class="nav-item active"><span class="nav-icon">📊</span>Dashboard</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════════════
+   FOOD LINK — App State & Logic
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+const STATE = {
+  users: [
+    { id:1, email:'donor@foodlink.in',  password:'demo123', role:'DONOR', name:'Rakesh Sharma' },
+    { id:2, email:'ngo1@foodlink.in',   password:'demo123', role:'NGO',   name:'Hope Foundation',   lat:13.0827, lng:80.2707, members:150, available:true },
+    { id:3, email:'ngo2@foodlink.in',   password:'demo123', role:'NGO',   name:'Food For All',      lat:13.0569, lng:80.2425, members:80,  available:true },
+    { id:4, email:'ngo3@foodlink.in',   password:'demo123', role:'NGO',   name:'Community Kitchen', lat:13.1200, lng:80.3100, members:200, available:true },
+  ],
+  donations: [],
+  alerts: [],
+  nextDonationId: 1,
+  nextAlertId: 1,
+  currentUser: null,
+  currentAlert: null,
+  lastRanking: null,
+};
+
+// ── Haversine ──────────────────────────────────────────────────────────────────
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371, toR = Math.PI/180;
+  const dlat = (lat2-lat1)*toR, dlng = (lng2-lng1)*toR;
+  const a = Math.sin(dlat/2)**2 + Math.cos(lat1*toR)*Math.cos(lat2*toR)*Math.sin(dlng/2)**2;
+  return R * 2 * Math.asin(Math.sqrt(a));
+}
+
+// ── NGO Ranking Algorithm: Score = 0.40*D + 0.20*A + 0.40*R ─────────────────
+function rankNGOs(donation) {
+  const ngos = STATE.users.filter(u => u.role === 'NGO' && u.available);
+  if (!ngos.length) return [];
+  const { lat, lng } = donation;
+  const distances = ngos.map(n => haversine(lat, lng, n.lat, n.lng));
+  const members   = ngos.map(n => n.members);
+  const dmin = Math.min(...distances), dmax = Math.max(...distances);
+  const rmin = Math.min(...members),   rmax = Math.max(...members);
+  return ngos.map((n, i) => {
+    const D = dmax === dmin ? 1 : (dmax - distances[i]) / (dmax - dmin);
+    const A = 1.0;
+    const R = rmax === rmin ? 1 : (members[i] - rmin) / (rmax - rmin);
+    return { ngo: n, score: 0.40*D + 0.20*A + 0.40*R, D, A, R, dist: distances[i] };
+  }).sort((a, b) => b.score - a.score);
+}
+
+// ── Auth ───────────────────────────────────────────────────────────────────────
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const user  = STATE.users.find(u => u.email === email && u.password === pass);
+  if (!user) return toast('❌ Invalid email or password');
+  STATE.currentUser = user;
+  if (user.role === 'DONOR') {
+    document.getElementById('donor-welcome').textContent = user.name.split(' ')[0] + ' 👋';
+    refreshDonorHome();
+    showScreen('donor-home');
+  } else {
+    document.getElementById('ngo-welcome').textContent = user.name + ' 🏛️';
+    document.getElementById('ngo-sub').textContent = `Available today · ${user.members} members`;
+    refreshNgoHome();
+    showScreen('ngo-home');
+  }
+}
+
+function fillLogin(email, pass) {
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-pass').value = pass;
+}
+
+let regRole = 'DONOR';
+function setRole(role) {
+  regRole = role;
+  document.getElementById('role-donor').classList.toggle('active', role==='DONOR');
+  document.getElementById('role-ngo').classList.toggle('active', role==='NGO');
+  document.getElementById('ngo-fields').style.display = role==='NGO' ? 'flex' : 'none';
+}
+
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  if (!name||!email||!pass) return toast('❌ Please fill all fields');
+  if (STATE.users.find(u=>u.email===email)) return toast('❌ Email already registered');
+  const id = STATE.users.length + 1;
+  const u = { id, email, password:pass, role:regRole, name };
+  if (regRole==='NGO') {
+    u.lat = parseFloat(document.getElementById('reg-lat').value)||0;
+    u.lng = parseFloat(document.getElementById('reg-lng').value)||0;
+    u.members = parseInt(document.getElementById('reg-members').value)||10;
+    u.available = true;
+  }
+  STATE.users.push(u);
+  toast('✅ Account created! Please login.');
+  showScreen('login');
+}
+
+function doLogout() {
+  STATE.currentUser = null;
+  showScreen('login');
+  toast('👋 Logged out');
+}
+
+// ── Create Donation ────────────────────────────────────────────────────────────
+function doCreateDonation() {
+  const qty  = parseFloat(document.getElementById('d-qty').value)||0;
+  const unit = document.getElementById('d-unit').value;
+  const desc = document.getElementById('d-desc').value||'Food donation';
+  const lat  = parseFloat(document.getElementById('d-lat').value)||13.07;
+  const lng  = parseFloat(document.getElementById('d-lng').value)||80.26;
+
+  const now = new Date();
+  const donation = {
+    id: STATE.nextDonationId++,
+    donorId: STATE.currentUser.id,
+    quantity: qty, unit, description: desc, lat, lng,
+    status: 'PENDING',
+    createdAt: now.toISOString(),
+    qrToken: null,
+  };
+  STATE.donations.push(donation);
+  toast('✅ Donation submitted!');
+
+  // Run ranking algorithm
+  const ranked = rankNGOs(donation);
+  STATE.lastRanking = ranked;
+
+  // Create alerts
+  ranked.forEach((item, i) => {
+    STATE.alerts.push({
+      id: STATE.nextAlertId++,
+      donationId: donation.id,
+      ngoId: item.ngo.id,
+      rank: i+1,
+      score: item.score,
+      D: item.D, A: item.A, R: item.R,
+      dist: item.dist,
+      response: i===0 ? 'PENDING' : 'QUEUED',
+      sentAt: i===0 ? now.toISOString() : null,
+    });
+  });
+
+  if (ranked.length) {
+    donation.status = 'ALERTED';
+    document.getElementById('alerted-ngo-name').textContent = ranked[0].ngo.name;
+    document.getElementById('alert-sent-banner').style.display = 'block';
+  }
+
+  // Render ranking screen
+  renderRankingList(ranked, donation);
+  showScreen('ngo-ranking');
+  refreshDonorHome();
+}
+
+function renderRankingList(ranked, donation) {
+  const el = document.getElementById('ranking-list');
+  if (!ranked.length) { el.innerHTML = '<div style="color:var(--text-3);text-align:center;padding:24px;">No available NGOs found.</div>'; return; }
+  el.innerHTML = ranked.map((item,i) => `
+    <div class="card" style="margin-bottom:10px; ${i===0?'border-color:var(--green); border-width:2px;':''}">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:${i===0?'var(--green)':'var(--border)'};color:${i===0?'#fff':'var(--text-2)'};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;">${i+1}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:14px;">${item.ngo.name}</div>
+          <div style="font-size:11px;color:var(--text-3);">${item.dist.toFixed(2)} km away · ${item.ngo.members} members</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;color:${i===0?'var(--green)':'var(--text-2)'};">${(item.score*100).toFixed(1)}</div>
+          <div style="font-size:10px;color:var(--text-3);">score</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+        <div style="text-align:center;background:var(--bg);border-radius:var(--r-sm);padding:6px;">
+          <div style="font-size:13px;font-weight:700;color:var(--green);">${(item.D*100).toFixed(0)}%</div>
+          <div style="font-size:9px;color:var(--text-3);">D(dist)</div>
+        </div>
+        <div style="text-align:center;background:var(--bg);border-radius:var(--r-sm);padding:6px;">
+          <div style="font-size:13px;font-weight:700;color:var(--green);">${(item.A*100).toFixed(0)}%</div>
+          <div style="font-size:9px;color:var(--text-3);">A(avail)</div>
+        </div>
+        <div style="text-align:center;background:var(--bg);border-radius:var(--r-sm);padding:6px;">
+          <div style="font-size:13px;font-weight:700;color:var(--green);">${(item.R*100).toFixed(0)}%</div>
+          <div style="font-size:9px;color:var(--text-3);">R(need)</div>
+        </div>
+      </div>
+      <div class="rank-bar"><div class="rank-fill" style="width:${(item.score*100).toFixed(1)}%;"></div></div>
+      ${i===0?`<div style="margin-top:8px;"><span class="badge badge-orange">🔔 Alert sent — awaiting response</span></div>`:''}
+    </div>
+  `).join('');
+}
+
+// ── Donor Home Refresh ─────────────────────────────────────────────────────────
+function refreshDonorHome() {
+  const myDonations = STATE.donations.filter(d => d.donorId === STATE.currentUser?.id);
+  document.getElementById('donor-donation-count').textContent = `${myDonations.length} total · ${myDonations.filter(d=>d.status==='COMPLETED').length} completed`;
+
+  const recentEl = document.getElementById('donor-recent');
+  if (!myDonations.length) {
+    recentEl.innerHTML = '<div style="text-align:center;color:var(--text-3);padding:16px;font-size:13px;">No donations yet.</div>';
+    return;
+  }
+  recentEl.innerHTML = myDonations.slice(-3).reverse().map(d => `
+    <div class="card-row" onclick="viewDonation(${d.id})">
+      <div class="icon-circle" style="background:var(--green-light);">🍛</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:14px;">${d.quantity}${d.unit} ${d.description}</div>
+        <div style="font-size:11px;color:var(--text-3);">${new Date(d.createdAt).toLocaleDateString()}</div>
+      </div>
+      ${statusBadge(d.status)}
+    </div>
+  `).join('');
+}
+
+// ── My Donations List ──────────────────────────────────────────────────────────
+function renderDonationsList() {
+  const myDonations = STATE.donations.filter(d => d.donorId === STATE.currentUser?.id);
+  const el = document.getElementById('my-donations-list');
+  if (!myDonations.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--text-3);padding:40px 0;font-size:14px;">No donations yet.<br>Tap Donate to get started!</div>';
+    return;
+  }
+  el.innerHTML = myDonations.slice().reverse().map(d => `
+    <div class="card-row" onclick="viewDonation(${d.id})">
+      <div class="icon-circle" style="background:var(--green-light);">🍛</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:14px;">${d.quantity}${d.unit} • ${d.description}</div>
+        <div style="font-size:11px;color:var(--text-3);">ID #${d.id} • ${new Date(d.createdAt).toLocaleDateString()}</div>
+      </div>
+      ${statusBadge(d.status)}
+    </div>
+  `).join('');
+}
+
+function viewDonation(id) {
+  const d = STATE.donations.find(x=>x.id===id);
+  if (!d) return;
+  document.getElementById('dd-id').textContent = d.id;
+  const alerts = STATE.alerts.filter(a=>a.donationId===id);
+  const accepted = alerts.find(a=>a.response==='ACCEPTED');
+  const body = document.getElementById('donation-detail-body');
+  body.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:4px;">
+      ${statusBadge(d.status)}
+      <span style="font-size:13px;color:var(--text-3);">Donation #${d.id}</span>
+    </div>
+    <div class="card">
+      <div style="display:grid;gap:10px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:13px;">Food</span><span style="font-weight:600;font-size:13px;">${d.description}</span></div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:13px;">Quantity</span><span style="font-weight:600;font-size:13px;">${d.quantity} ${d.unit}</span></div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:13px;">Pickup</span><span style="font-weight:600;font-size:13px;">${d.lat.toFixed(4)}°N, ${d.lng.toFixed(4)}°E</span></div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:13px;">Submitted</span><span style="font-weight:600;font-size:13px;">${new Date(d.createdAt).toLocaleString()}</span></div>
+        ${accepted?`<div class="divider"></div><div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:13px;">Accepted by</span><span style="font-weight:600;font-size:13px;color:var(--green);">${STATE.users.find(u=>u.id===accepted.ngoId)?.name||'NGO'}</span></div>`:''}
+      </div>
+    </div>
+
+    ${(d.status==='ACCEPTED'||d.status==='COMPLETED') && d.qrToken ? `
+      <div class="card" style="align-items:center;text-align:center;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:13px;color:var(--text-3);">Show this QR code to the NGO volunteer</div>
+        <div class="qr-box">
+          <span>▦</span>
+          <div class="qr-corner tl"></div><div class="qr-corner tr"></div>
+          <div class="qr-corner bl"></div><div class="qr-corner br"></div>
+        </div>
+        <div style="font-family:monospace;font-size:11px;color:var(--text-3);word-break:break-all;">${d.qrToken}</div>
+        ${d.status==='COMPLETED'?'<span class="badge badge-green" style="font-size:13px;padding:6px 16px;">✅ Handover Verified — Donation Complete!</span>':''}
+      </div>` : ''}
+
+    ${alerts.length ? `
+      <div class="section-label">NGO Alert Cascade</div>
+      ${alerts.map(a => {
+        const ngo = STATE.users.find(u=>u.id===a.ngoId);
+        return `<div class="card-row" style="cursor:default;">
+          <div style="width:24px;height:24px;border-radius:50%;background:${a.response==='ACCEPTED'?'var(--green)':a.response==='PENDING'?'var(--orange)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${a.response==='PENDING'||a.response==='ACCEPTED'?'#fff':'var(--text-3)'};">${a.rank}</div>
+          <div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:13px;">${ngo?.name||'NGO'}</div><div style="font-size:11px;color:var(--text-3);">Score: ${(a.score*100).toFixed(1)}</div></div>
+          ${statusBadge(a.response)}
+        </div>`;
+      }).join('')}` : ''}
+  `;
+  showScreen('donation-detail');
+}
+
+// ── NGO Home Refresh ───────────────────────────────────────────────────────────
+function refreshNgoHome() {
+  const u = STATE.currentUser;
+  if (!u || u.role!=='NGO') return;
+  const ngoProfile = STATE.users.find(x=>x.id===u.id);
+  const myAlerts = STATE.alerts.filter(a=>a.ngoId===u.id);
+  const pending = myAlerts.filter(a=>a.response==='PENDING').length;
+  const accepted = myAlerts.filter(a=>a.response==='ACCEPTED').length;
+  document.getElementById('ngo-stat-pending').textContent = pending;
+  document.getElementById('ngo-stat-accepted').textContent = accepted;
+  const badge = document.getElementById('ngo-badge-count');
+  if (pending) { badge.textContent = pending; badge.style.display=''; }
+  else badge.style.display='none';
+
+  const toggle = document.getElementById('avail-toggle');
+  const knob   = document.getElementById('avail-knob');
+  const label  = document.getElementById('avail-label');
+  if (ngoProfile.available) {
+    toggle.style.background='var(--green)'; knob.style.right='3px'; label.textContent='Currently: Available ✅';
+  } else {
+    toggle.style.background='var(--border)'; knob.style.right='25px'; label.textContent='Currently: Unavailable ❌';
+  }
+}
+
+function toggleAvailability() {
+  const u = STATE.users.find(x=>x.id===STATE.currentUser.id);
+  u.available = !u.available;
+  refreshNgoHome();
+  toast(u.available ? '✅ Now available for food alerts' : '❌ Marked as unavailable today');
+}
+
+// ── NGO Alerts ─────────────────────────────────────────────────────────────────
+function renderNgoAlerts() {
+  const u = STATE.currentUser;
+  const myAlerts = STATE.alerts.filter(a => a.ngoId===u.id && a.response !== 'QUEUED');
+  const el = document.getElementById('ngo-alerts-list');
+  if (!myAlerts.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--text-3);padding:40px 0;font-size:14px;">No alerts yet.<br>You\'ll be notified when a donation is nearby.</div>';
+    return;
+  }
+  el.innerHTML = myAlerts.slice().reverse().map(a => {
+    const d = STATE.donations.find(x=>x.id===a.donationId);
+    const isPending = a.response==='PENDING';
+    return `<div class="card-row" onclick="viewAlert(${a.id})">
+      <div class="icon-circle" style="background:${isPending?'var(--orange-light)':'var(--green-light)'};">🔔</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:14px;">${d?.quantity||'?'}${d?.unit||'kg'} food available</div>
+        <div style="font-size:11px;color:var(--text-3);">Rank #${a.rank} • Score: ${(a.score*100).toFixed(1)} • ${a.dist.toFixed(1)}km away</div>
+      </div>
+      ${statusBadge(a.response)}
+    </div>`;
+  }).join('');
+}
+
+function viewAlert(id) {
+  const a = STATE.alerts.find(x=>x.id===id);
+  if (!a) return;
+  const d = STATE.donations.find(x=>x.id===a.donationId);
+  STATE.currentAlert = a;
+  const el = document.getElementById('alert-detail-body');
+  const isPending = a.response==='PENDING';
+  const isAccepted = a.response==='ACCEPTED';
+  el.innerHTML = `
+    ${isPending ? `<div class="timer-banner">⏱️ <span style="color:var(--warn);font-weight:600;">Respond within 5 minutes or this alert will cascade to the next NGO</span></div>` : ''}
+
+    <div class="card">
+      <div style="font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Donation Info</div>
+      <div style="display:grid;gap:9px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:13px;">Food</span><span style="font-weight:600;font-size:13px;">${d?.description||'—'}</span></div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:13px;">Quantity</span><span style="font-weight:600;font-size:13px;">${d?.quantity||'?'} ${d?.unit||'kg'}</span></div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:13px;">Distance</span><span style="font-weight:600;font-size:13px;color:var(--green);">${a.dist.toFixed(2)} km away</span></div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:13px;">Pickup</span><span style="font-weight:600;font-size:13px;">${d?.lat.toFixed(4)}°N, ${d?.lng.toFixed(4)}°E</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Your Ranking Score</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-family:'Poppins',sans-serif;font-size:36px;font-weight:800;color:var(--green);">${(a.score*100).toFixed(1)}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;color:var(--text-2);">Rank <strong>#${a.rank}</strong> of all available NGOs</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:2px;">0.40×D(${(a.D*100).toFixed(0)}%) + 0.20×A(${(a.A*100).toFixed(0)}%) + 0.40×R(${(a.R*100).toFixed(0)}%)</div>
+        </div>
+      </div>
+      <div class="rank-bar" style="margin-top:10px;"><div class="rank-fill" style="width:${(a.score*100).toFixed(1)}%;"></div></div>
+    </div>
+
+    ${isPending ? `
+      <div class="btn-row">
+        <button class="btn btn-danger" onclick="rejectAlert(${a.id})">✕ Reject</button>
+        <button class="btn btn-primary" onclick="acceptAlert(${a.id})">✓ Accept</button>
+      </div>` : ''}
+
+    ${isAccepted ? `
+      <div class="card" style="border-color:var(--green);border-width:2px;">
+        <div style="font-size:13px;color:var(--green);font-weight:600;margin-bottom:8px;">✅ You accepted this donation</div>
+        <div style="font-size:12px;color:var(--text-3);">Visit the donor's location and scan their QR code to confirm handover.</div>
+      </div>
+      <button class="btn btn-primary" onclick="goToScanner(${a.donationId})">📷 Scan QR Code</button>` : ''}
+
+    ${a.response==='REJECTED' ? `<div class="card badge-grey" style="text-align:center;padding:20px;"><span style="color:var(--text-3);font-size:14px;">You rejected this alert.</span></div>` : ''}
+    ${a.response==='TIMED_OUT' ? `<div class="card badge-grey" style="text-align:center;padding:20px;"><span style="color:var(--text-3);font-size:14px;">This alert timed out (5-minute window expired).</span></div>` : ''}
+  `;
+  showScreen('alert-detail');
+}
+
+function acceptAlert(alertId) {
+  const a = STATE.alerts.find(x=>x.id===alertId);
+  if (!a) return;
+  a.response = 'ACCEPTED';
+  const d = STATE.donations.find(x=>x.id===a.donationId);
+  if (d) { d.status='ACCEPTED'; d.qrToken='FL-'+Math.random().toString(36).slice(2,10).toUpperCase()+'-'+d.id; }
+  // Reject other queued alerts for this donation
+  STATE.alerts.filter(x=>x.donationId===a.donationId && x.id!==alertId).forEach(x=>{ if(x.response!=='REJECTED') x.response='REJECTED'; });
+  toast('✅ Alert accepted! Visit pickup location.');
+  refreshNgoHome();
+  viewAlert(alertId);
+}
+
+function rejectAlert(alertId) {
+  const a = STATE.alerts.find(x=>x.id===alertId);
+  if (!a) return;
+  a.response = 'REJECTED';
+  // Activate next ranked alert
+  const nextAlert = STATE.alerts.find(x=>x.donationId===a.donationId && x.rank===a.rank+1);
+  if (nextAlert) { nextAlert.response='PENDING'; nextAlert.sentAt=new Date().toISOString(); toast('Alert cascaded to next NGO'); }
+  else { const d=STATE.donations.find(x=>x.id===a.donationId); if(d) d.status='CANCELLED'; toast('No more NGOs available — donation cancelled'); }
+  refreshNgoHome();
+  showScreen('ngo-alerts');
+  renderNgoAlerts();
+}
+
+// ── QR Scanner ─────────────────────────────────────────────────────────────────
+let scannerDonationId = null;
+function goToScanner(donationId) {
+  scannerDonationId = donationId;
+  const d = STATE.donations.find(x=>x.id===donationId);
+  document.getElementById('scanner-donation-info').textContent = d ? `Verifying donation #${d.id} — ${d.quantity}${d.unit} food` : '';
+  showScreen('qr-scanner');
+}
+
+function simulateScan() {
+  const d = STATE.donations.find(x=>x.id===scannerDonationId);
+  if (!d || !d.qrToken) return toast('❌ No QR token found');
+  d.status = 'COMPLETED';
+  toast('✅ QR verified! Food handover complete — donation COMPLETED');
+  refreshNgoHome();
+  setTimeout(() => { showScreen('ngo-alerts'); renderNgoAlerts(); }, 1800);
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const total = STATE.donations.length;
+  const completed = STATE.donations.filter(d=>d.status==='COMPLETED').length;
+  const rescued = STATE.donations.filter(d=>d.status==='COMPLETED').reduce((s,d)=>s+(d.unit==='kg'?d.quantity:0),0);
+  const ngos = STATE.users.filter(u=>u.role==='NGO'&&u.available).length;
+  document.getElementById('dash-total').textContent = total;
+  document.getElementById('dash-completed').textContent = completed;
+  document.getElementById('dash-rescued').textContent = rescued.toFixed(0)+'kg';
+  document.getElementById('dash-ngos').textContent = ngos;
+
+  if (STATE.lastRanking) {
+    document.getElementById('ranked-preview').style.display='block';
+    document.getElementById('ranked-preview-list').innerHTML = STATE.lastRanking.map((item,i) => `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <div style="width:24px;height:24px;border-radius:50%;background:${i===0?'var(--green)':'var(--border)'};color:${i===0?'#fff':'var(--text-2)'};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;">${i+1}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:600;">${item.ngo.name}</div>
+          <div class="rank-bar" style="margin-top:3px;"><div class="rank-fill" style="width:${(item.score*100).toFixed(1)}%;"></div></div>
+        </div>
+        <div style="font-weight:700;font-size:14px;color:var(--green);font-variant-numeric:tabular-nums;">${(item.score*100).toFixed(1)}</div>
+      </div>
+    `).join('');
+  }
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function statusBadge(s) {
+  const map = {
+    PENDING:  ['badge-grey','⏳ Pending'],
+    ALERTED:  ['badge-orange','📢 Alerted'],
+    QUEUED:   ['badge-grey','🕐 Queued'],
+    ACCEPTED: ['badge-blue','✅ Accepted'],
+    COMPLETED:['badge-green','🎉 Completed'],
+    CANCELLED:['badge-red','✕ Cancelled'],
+    REJECTED: ['badge-red','✕ Rejected'],
+    TIMED_OUT:['badge-grey','⏰ Timed Out'],
+  };
+  const [cls, label] = map[s] || ['badge-grey', s];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+let toastTimer = null;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+id)?.classList.add('active');
+
+  // Pre-render on navigation
+  if (id==='donor-donations') renderDonationsList();
+  if (id==='ngo-alerts') renderNgoAlerts();
+  if (id==='ngo-home') refreshNgoHome();
+  if (id==='dashboard') renderDashboard();
+  if (id==='donor-home') refreshDonorHome();
+}
+
+function goBackFromDash() {
+  if (STATE.currentUser?.role==='NGO') showScreen('ngo-home');
+  else showScreen('donor-home');
+}
+
+// ── Clock ──────────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});
+  document.getElementById('sb-time').textContent = t;
+}
+setInterval(updateClock, 10000);
+updateClock();
+
+// ── Pre-fill datetimes ──────────────────────────────────────────────────────────
+(function(){
+  const n = new Date(), p = new Date(n.getTime()+60*60*1000), e = new Date(n.getTime()+8*60*60*1000);
+  const fmt = d => d.toISOString().slice(0,16);
+  document.getElementById('d-prep').value = fmt(p);
+  document.getElementById('d-exp').value  = fmt(e);
+})();
+</script>
+
+</body></html>
